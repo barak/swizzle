@@ -77,7 +77,7 @@ static int set_preload(void) {
         return -1;
     }
 
-    sprintf(combined, "%s:%s", lib_path, existing);
+    snprintf(combined, strlen(lib_path) + strlen(existing) + 2, "%s:%s", lib_path, existing);
     if (setenv("LD_PRELOAD", combined, 1) != 0) {
         free(combined);
         return -1;

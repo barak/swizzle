@@ -17,12 +17,15 @@ static void print_file(int fd) {
     char buffer[256];
     ssize_t count;
 
-    count = read(fd, buffer, sizeof(buffer) - 1);
+    while ((count = read(fd, buffer, sizeof(buffer))) > 0) {
+        if (fwrite(buffer, 1, (size_t) count, stdout) != (size_t) count) {
+            die("fwrite");
+        }
+    }
+
     if (count < 0) {
         die("read");
     }
-    buffer[count] = '\0';
-    printf("%s", buffer);
 }
 
 int main(int argc, char **argv) {
