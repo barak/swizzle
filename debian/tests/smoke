@@ -1,0 +1,13 @@
+#!/bin/sh
+set -eu
+
+TMPDIR=$(mktemp -d)
+trap 'rm -rf "$TMPDIR"' EXIT
+
+mkdir -p "$TMPDIR/src/sub" "$TMPDIR/dst/sub"
+printf 'source\n' >"$TMPDIR/src/sub/value.txt"
+printf 'redirected\n' >"$TMPDIR/dst/sub/value.txt"
+
+cd "$TMPDIR"
+output=$(swizzle src:dst -- cat src/sub/value.txt)
+[ "$output" = "redirected" ]

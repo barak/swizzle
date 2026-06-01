@@ -1,0 +1,15 @@
+Source: swizzle
+Section: utils
+Maintainer: Barak A. Pearlmutter <bap@debian.org>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.4
+Homepage: https://github.com/barak/swizzle
+
+Package: swizzle
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: intercept and redirect file access in wrapped programs
+ Runs programs with LD_PRELOAD-based path rewriting so selected source
+ path prefixes are redirected to destination prefixes. Also installs
+ claude-lconf, a helper that maps project-local .../.claude paths to
+ ~/.config/claude/... before launching claude.

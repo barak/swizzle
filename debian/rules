@@ -1,0 +1,7 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+execute_after_dh_auto_install:
+	find debian/swizzle -name '*.la' -delete
