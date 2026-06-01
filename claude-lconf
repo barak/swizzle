@@ -1,0 +1,21 @@
+#!/bin/sh
+set -eu
+
+SWIZZLE_BIN="${SWIZZLE_BIN:-swizzle}"
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+if [ -x "$SCRIPT_DIR/swizzle" ]; then
+  SWIZZLE_BIN="$SCRIPT_DIR/swizzle"
+fi
+
+PWD_PATH=${PWD:-$(pwd)}
+CONFIG_DIR="$HOME/.config/claude"
+case "$PWD_PATH" in
+  "$HOME")
+    ;;
+  "$HOME"/*)
+    CONFIG_DIR="$CONFIG_DIR/${PWD_PATH#"$HOME"/}"
+    ;;
+esac
+
+mkdir -p "$CONFIG_DIR"
+exec "$SWIZZLE_BIN" "$PWD_PATH/.claude:$CONFIG_DIR" -- claude "$@"

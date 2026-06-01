@@ -1,0 +1,111 @@
+.TH CLAUDE-LCONF 1 "June 2026" "swizzle 1.0.0" "User Commands"
+.SH NAME
+claude-lconf \- run claude with per-directory config stored under ~/.config/claude
+.SH SYNOPSIS
+.B claude-lconf
+.RI [ ARG " ...]"
+.SH DESCRIPTION
+.B claude-lconf
+launches
+.BR claude (1)
+with its
+.I .claude
+directory redirected from the current working directory to a mirrored path
+under
+.IR ~/.config/claude .
+.PP
+This keeps Claude configuration out of project trees and under
+.IR ~/.config ,
+while preserving per-directory isolation for working directories under
+.IR $HOME :
+each such directory gets its own subtree.
+.PP
+Path mapping is performed by
+.BR swizzle (1)
+via
+.B LD_PRELOAD
+so that
+.B claude
+itself requires no modification.
+.SH PATH MAPPING
+Let
+.I CWD
+be the current working directory.
+.PP
+If
+.I CWD
+is
+.I $HOME
+or a descendant of
+.IR $HOME ,
+the config directory is:
+.PP
+.RS
+.I ~/.config/claude/<CWD relative to $HOME>
+.RE
+.PP
+Otherwise the config directory is simply
+.IR ~/.config/claude .
+.PP
+Accesses by
+.B claude
+to
+.I CWD/.claude
+(and paths beneath it) are transparently redirected to the computed config
+directory.
+The config directory is created if it does not already exist.
+.SH ENVIRONMENT
+.TP
+.B SWIZZLE_BIN
+Path to the
+.B swizzle
+binary.  Defaults to
+.BR swizzle ,
+but if a
+.B swizzle
+executable exists in the same directory as
+.BR claude-lconf ,
+that copy is preferred.
+.TP
+.B HOME
+Used to derive the config directory path.
+.TP
+.B PWD
+Used as the current working directory.  Falls back to
+.BR pwd (1)
+if unset.
+.SH EXAMPLES
+.PP
+Run Claude from a project directory:
+.PP
+.nf
+cd ~/projects/myapp
+claude-lconf
+.fi
+.PP
+Claude's config is stored in
+.I ~/.config/claude/projects/myapp
+instead of
+.IR ~/projects/myapp/.claude .
+.PP
+Pass arguments through to
+.BR claude :
+.PP
+.nf
+claude-lconf --print "summarise this repo"
+.fi
+.SH EXIT STATUS
+The exit status of
+.B claude-lconf
+is the exit status of
+.BR claude ,
+or one of the exit codes documented in
+.BR swizzle (1)
+if setup fails before
+.B claude
+is reached.
+.SH SEE ALSO
+.BR swizzle (1),
+.BR claude (1)
+.SH AUTHOR
+Barak A. Pearlmutter
