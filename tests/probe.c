@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
             die("open");
         }
         print_file(fd);
-        close(fd);
+        (void) close(fd);
         return 0;
     }
 
@@ -74,8 +74,8 @@ int main(int argc, char **argv) {
             die("openat");
         }
         print_file(fd);
-        close(fd);
-        close(dirfd);
+        (void) close(fd);
+        (void) close(dirfd);
         return 0;
     }
 
