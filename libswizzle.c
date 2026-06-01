@@ -237,7 +237,9 @@ static void load_mappings(void) __attribute__((constructor));
 
 static void load_mappings(void) {
     const char *count_string = getenv("SWIZZLE_MAP_COUNT");
+    char *end = NULL;
     char cwd[PATH_MAX];
+    unsigned long parsed_count;
     size_t i;
 
     if (count_string == NULL || count_string[0] == '\0') {
@@ -248,10 +250,12 @@ static void load_mappings(void) {
         return;
     }
 
-    mappings_count = (size_t) strtoul(count_string, NULL, 10);
-    if (mappings_count == 0) {
+    errno = 0;
+    parsed_count = strtoul(count_string, &end, 10);
+    if (errno != 0 || end == count_string || *end != '\0' || parsed_count == 0) {
         return;
     }
+    mappings_count = (size_t) parsed_count;
 
     mappings = calloc(mappings_count, sizeof(*mappings));
     if (mappings == NULL) {
