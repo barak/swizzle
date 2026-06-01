@@ -1,0 +1,7 @@
+.debhelper/
+/*.substvars
+/autoreconf.after
+/autoreconf.before
+/debhelper-build-stamp
+/files
+/swizzle/
