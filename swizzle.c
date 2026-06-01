@@ -48,6 +48,7 @@ static int set_preload(void) {
     ssize_t length;
     const char *existing;
     char *combined;
+    size_t combined_size;
 
     length = readlink("/proc/self/exe", exe_path, sizeof(exe_path) - 1);
     if (length < 0) {
@@ -72,12 +73,13 @@ static int set_preload(void) {
         return setenv("LD_PRELOAD", lib_path, 1);
     }
 
-    combined = malloc(strlen(lib_path) + strlen(existing) + 2);
+    combined_size = strlen(lib_path) + 1 + strlen(existing) + 1;
+    combined = malloc(combined_size);
     if (combined == NULL) {
         return -1;
     }
 
-    snprintf(combined, strlen(lib_path) + strlen(existing) + 2, "%s:%s", lib_path, existing);
+    snprintf(combined, combined_size, "%s:%s", lib_path, existing);
     if (setenv("LD_PRELOAD", combined, 1) != 0) {
         free(combined);
         return -1;

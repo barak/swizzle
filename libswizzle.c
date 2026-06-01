@@ -43,7 +43,7 @@ static DIR *(*real_opendir_fn)(const char *);
 
 static char *normalize_absolute_path(const char *path) {
     size_t length = strlen(path);
-    char *normalized = malloc(length + 2);
+    char *normalized = malloc(length + 1);
     size_t out = 0;
     const char *cursor = path;
 
@@ -111,7 +111,8 @@ static char *join_and_normalize(const char *base, const char *path) {
     size_t base_length = strlen(base);
     size_t path_length = strlen(path);
     bool needs_slash = base_length == 0 || base[base_length - 1] != '/';
-    char *combined = malloc(base_length + path_length + (needs_slash ? 2 : 1));
+    size_t combined_length = base_length + (needs_slash ? 1 : 0) + path_length + 1;
+    char *combined = malloc(combined_length);
     char *normalized;
 
     if (combined == NULL) {
