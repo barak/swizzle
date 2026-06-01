@@ -1,0 +1,74 @@
+.TH SWIZZLE 1 "June 2026" "swizzle 1.0.0" "User Commands"
+.SH NAME
+swizzle \- redirect file access paths for a program with LD_PRELOAD
+.SH SYNOPSIS
+.B swizzle
+.IR "[" SRC:DST " ...] -- " PROGRAM " [" ARG " ...]"
+.SH DESCRIPTION
+.B swizzle
+preloads
+.B libswizzle.so
+and runs
+.IR PROGRAM ,
+rewriting file access paths from each source prefix to its destination prefix.
+.PP
+Each
+.I SRC:DST
+mapping applies to
+.I SRC
+and paths below it. The longest matching source prefix wins when multiple
+mappings match a path.
+.PP
+Relative paths in mappings are resolved against the current working directory
+at process startup.
+.SH ARGUMENTS
+.TP
+.IR SRC:DST
+Define a path mapping from source prefix
+.I SRC
+to destination prefix
+.IR DST .
+Zero or more mappings may be provided.
+.TP
+.B --
+Separates mapping arguments from the command to execute.
+.TP
+.IR PROGRAM " [" ARG " ...]"
+Program and arguments to execute with path rewriting enabled.
+.SH EXIT STATUS
+.TP
+.B 0
+The wrapped program exited successfully.
+.TP
+.B 1
+An internal setup error occurred (for example, failing to configure
+.BR LD_PRELOAD ).
+.TP
+.B 2
+Invalid command line usage or malformed mapping.
+.TP
+.B 127
+Failed to execute
+.IR PROGRAM .
+.SH EXAMPLES
+.PP
+.nf
+swizzle foo:../common/foo bar/baz:/tmp/baaz -- myprogram --options
+.fi
+.PP
+In this example, accesses to
+.I foo
+and
+.I foo/...
+are redirected to
+.I ../common/foo
+and
+.IR ../common/foo/... ,
+and accesses to
+.I bar/baz
+and
+.I bar/baz/...
+are redirected to
+.I /tmp/baaz
+and
+.IR /tmp/baaz/... .
